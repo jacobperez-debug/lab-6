@@ -18,14 +18,21 @@ The exercises from the functions below were pulled from the newest version of [*
 #| label: question-1
 
 rescale01 <- function(x) {
-  rng <- range(x, na.rm = TRUE, finite = TRUE)
+  rng <- range(x[is.finite(x)], na.rm = TRUE)
   scaled <- (x - rng[1]) / (rng[2] - rng[1])
+  
   dplyr::case_when(
     is.infinite(x) & x == -Inf ~ 0,
     is.infinite(x) & x == Inf ~ 1,
     TRUE ~ scaled
   )
 }
+```
+
+```{r}
+rescale01(c(5, 10, 15))             
+rescale01(c(-Inf, 0, Inf))          
+rescale01(c(NA, 2, 3))  
 ```
 
 **Question 2:** Write a function that accepts a vector of birthdates and computes the age of each person in years.
@@ -67,7 +74,42 @@ both_na <- function(x, y) {
 
 ```{r}
 #| label: function-from-lab-2
+library(dplyr)
+library(rlang)
 
+remove_outliers <- function(data, ..., sd_thresh = 3){
+  vars <- enquos(...)
+  
+  filtered_data <- data
+  
+  for (var in vars) {
+    var_name <- quo_name(var)
+    
+    if (!is.numeric(pull(filtered_data, !!var))) {
+      warning(glue::glue("Variable '{var_name}' is not numeric."))
+      next
+    }
+    
+    var_mean <- mean(pull(filtered_data, !!var), na.rm = TRUE)
+    var_sd <- sd(pull(filtered_data, !!var), na.rm = TRUE)
+    
+    filtered_data <- filtered_data %>%
+      filter(abs((!!var - var_mean) / var_sd) < sd_thresh)
+  }
+  
+  return(filtered_data)
+}
+```
+
+```{r}
+# Multiple numeric vars
+remove_outliers(diamonds, price, x, y, z)
+
+# Skips non-numeric gracefully
+remove_outliers(diamonds, price, color)
+
+# Custom SD threshold
+remove_outliers(diamonds, price, x, y, z, sd_thresh = 2)
 ```
 
 For Questions 6 - 10 you will write different functions which work with data similar to the `nycflights13` data.
