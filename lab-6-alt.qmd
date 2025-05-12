@@ -150,6 +150,22 @@ You might want to read over the [Plot Functions section of *R for Data Science*]
 ```{r}
 #| label: question-11
 
+library(ggplot2)
+library(forcats)
+library(rlang)
+
+sorted_bars <- function(data, var) {
+  var <- enquo(var)
+  
+  ggplot(data, aes(x = fct_infreq(!!var) %>% fct_rev())) +
+    geom_bar() +
+    labs(
+      x = NULL,
+      y = "Count",
+      title = glue::glue("Bar chart of {quo_name(var)} (sorted by frequency)")
+    ) +
+    theme_minimal()
+}
 ```
 
 # Iteration
@@ -161,6 +177,18 @@ Alright, now let's take our plotting function and iterate it!
 ```{r}
 #| label: question-12
 
+library(purrr)
+library(dplyr)
+
+char_vars <- mpg %>% select(where(is.character)) %>% names()
+
+plots <- map(char_vars, ~ sorted_bars(mpg, .data[[.x]]))
+```
+
+```{r}
+library(patchwork)
+
+wrap_plots(plots, ncol = 2)
 ```
 
 # Contributing to the R for Data Science Community!
