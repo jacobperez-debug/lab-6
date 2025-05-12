@@ -77,6 +77,9 @@ For Questions 6 - 10 you will write different functions which work with data sim
 ```{r}
 #| label: question-6
 
+filter_sever <- function(flights) {
+  dplyr::filter(flights, is.na(arr_time) | dep_delay > 60)
+}
 ```
 
 **Question 7:** Write a `summarize_severe()` function that counts the number of cancelled flights and the number of flights delayed by more than an hour.
@@ -84,6 +87,13 @@ For Questions 6 - 10 you will write different functions which work with data sim
 ```{r}
 #| label: question-7
 
+summarize_sever <- function(flights) {
+  dplyr::summarise(
+    flights,
+    cancelled = sum(is.na(arr_time)),
+    delayed_over_hour = sum(dep_delay > 60, na.rm = TRUE)
+  )
+}
 ```
 
 **Question 8:** Modify your `filter_severe()` function to allow the user to supply the number of hours that should be used to filter the flights that were cancelled or delayed.
@@ -91,6 +101,10 @@ For Questions 6 - 10 you will write different functions which work with data sim
 ```{r}
 #| label: question-8
 
+filter_severe <- function(flights, hours = 1) {
+  delay_limit <- hours * 60
+  dplyr::filter(flights, is.na(arr_time) | dep_delay > delay_limit)
+}
 ```
 
 **Question 9:** Write a `summarize_weather()` function that summarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable.
