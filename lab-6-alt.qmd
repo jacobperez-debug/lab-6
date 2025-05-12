@@ -30,8 +30,13 @@ rescale01 <- function(x) {
 ```
 
 ```{r}
-rescale01(c(5, 10, 15))             
-rescale01(c(-Inf, 0, Inf))          
+# should return: 0.0, 0.5, 1.0
+rescale01(c(5, 10, 15))   
+
+ # should return: 0.0, 1.0
+rescale01(c(-Inf, Inf))  
+
+# should handle NA correctly
 rescale01(c(NA, 2, 3))  
 ```
 
@@ -43,6 +48,14 @@ rescale01(c(NA, 2, 3))
 age_in_years <- function(birthdates) {
   as.numeric(difftime(Sys.Date(), as.Date(birthdates), units = "days")) %/% 365
 }
+```
+
+```{r}
+# should return ~age in years
+age_in_years(c("2000-01-01", "1990-05-20")) 
+
+# should return 0
+age_in_years(Sys.Date())                    
 ```
 
 **Question 3:** Write a function that computes the variance and skewness of a numeric vector. Feel free to look up the definitions on Wikipedia or elsewhere!
@@ -60,12 +73,34 @@ variance_and_skewness <- function(x) {
 }
 ```
 
+```{r}
+# symmetric data (low skew)
+variance_and_skewness(c(1, 2, 3, 4, 5)) 
+
+# strong positive skew
+variance_and_skewness(c(1, 2, 2, 3, 100))
+
+# should ignore NA
+variance_and_skewness(c(1, NA, 3, 5))      
+```
+
 **Question 4:** Write a function called `both_na()` which takes two vectors of the same length and returns the number of positions that have an `NA` in both vectors.
 
 ```{r}
 both_na <- function(x, y) {
   sum(is.na(x) & is.na(y))
 }
+```
+
+```{r}
+# should return 1
+both_na(c(1, NA, 3, NA), c(NA, NA, 3, 4)) 
+
+# should return 2
+both_na(c(NA, NA), c(NA, NA))              
+
+# should return 0
+both_na(1:3, 4:6)              
 ```
 
 ## Data Frame Functions
@@ -124,6 +159,12 @@ filter_sever <- function(flights) {
 }
 ```
 
+```{r}
+library(nycflights13)
+
+filter_sever(flights)  
+```
+
 **Question 7:** Write a `summarize_severe()` function that counts the number of cancelled flights and the number of flights delayed by more than an hour.
 
 ```{r}
@@ -138,6 +179,10 @@ summarize_sever <- function(flights) {
 }
 ```
 
+```{r}
+summarize_sever(flights)
+```
+
 **Question 8:** Modify your `filter_severe()` function to allow the user to supply the number of hours that should be used to filter the flights that were cancelled or delayed.
 
 ```{r}
@@ -147,6 +192,10 @@ filter_severe <- function(flights, hours = 1) {
   delay_limit <- hours * 60
   dplyr::filter(flights, is.na(arr_time) | dep_delay > delay_limit)
 }
+```
+
+```{r}
+filter_severe(flights, hours = 2)
 ```
 
 **Question 9:** Write a `summarize_weather()` function that summarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable.
@@ -165,6 +214,11 @@ summarize_weather <- function(weather, variable) {
 }
 ```
 
+```{r}
+summarize_weather(weather, temp)
+summarize_weather(weather, wind_speed) 
+```
+
 **Question 10:** Write a `standardize_time()` function that converts the user supplied variable that uses clock time (e.g., `dep_time`, `arr_time`, etc.) into a decimal time (i.e. hours + (minutes / 60)).
 
 ```{r}
@@ -175,6 +229,14 @@ standardize_time <- function(time_vec) {
   minutes <- time_vec %% 100
   hours + minutes / 60
 }
+```
+
+```{r}
+# should return 9.00 and 14.5
+standardize_time(c(900, 1430))  
+
+ # midnight, 00:30, 1:00
+standardize_time(c(0, 30, 100))
 ```
 
 # Plotting Functions
