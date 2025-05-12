@@ -112,6 +112,15 @@ filter_severe <- function(flights, hours = 1) {
 ```{r}
 #| label: question-9
 
+summarize_weather <- function(weather, variable) {
+  variable <- rlang::enquo(variable)
+  dplyr::summarise(
+    weather,
+    min = min(!!variable, na.rm = TRUE),
+    mean = mean(!!variable, na.rm = TRUE),
+    max = max(!!variable, na.rm = TRUE)
+  )
+}
 ```
 
 **Question 10:** Write a `standardize_time()` function that converts the user supplied variable that uses clock time (e.g., `dep_time`, `arr_time`, etc.) into a decimal time (i.e. hours + (minutes / 60)).
@@ -119,6 +128,11 @@ filter_severe <- function(flights, hours = 1) {
 ```{r}
 #| label: question-10
 
+standardize_time <- function(time_vec) {
+  hours <- time_vec %/% 100
+  minutes <- time_vec %% 100
+  hours + minutes / 60
+}
 ```
 
 # Plotting Functions
