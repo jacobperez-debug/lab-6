@@ -3,9 +3,7 @@ title: "Lab 6 - Alternative"
 subtitle: "Contributing to R for Data Science"
 embed-resources: true
 editor: source
-  markdown: 
-    wrap: 72
-
+author: Jacob Perez
 ---
 
 The exercises from the functions below were pulled from the newest version of [*R for Data Science*](https://r4ds.hadley.nz/). Specifically, from Chapters 25 and 26. For this "alternative" lab you will complete the exercises from the textbook, with the option of submitting a pull request to the [repository for the textbook solutions](https://github.com/mine-cetinkaya-rundel/r4ds-solutions/).
@@ -109,6 +107,8 @@ both_na(1:3, 4:6)
 
 ```{r}
 #| label: function-from-lab-2
+#| message: false
+
 library(dplyr)
 library(rlang)
 
@@ -137,6 +137,10 @@ remove_outliers <- function(data, ..., sd_thresh = 3){
 ```
 
 ```{r}
+#| message: false
+
+library(tidyverse)
+
 # Multiple numeric vars
 remove_outliers(diamonds, price, x, y, z)
 
@@ -235,7 +239,7 @@ standardize_time <- function(time_vec) {
 # should return 9.00 and 14.5
 standardize_time(c(900, 1430))  
 
- # midnight, 00:30, 1:00
+
 standardize_time(c(0, 30, 100))
 ```
 
