@@ -16,14 +16,17 @@ The exercises from the functions below were pulled from the newest version of [*
 #| label: question-1
 
 rescale01 <- function(x) {
-  rng <- range(x[is.finite(x)], na.rm = TRUE)
-  scaled <- (x - rng[1]) / (rng[2] - rng[1])
   
-  dplyr::case_when(
-    is.infinite(x) & x == -Inf ~ 0,
-    is.infinite(x) & x == Inf ~ 1,
-    TRUE ~ scaled
+  x_clean <- dplyr::case_when(
+    x == -Inf ~ 0,
+    x ==  Inf ~ 1,
+    TRUE      ~ x
   )
+  
+  rng <- range(x_clean[is.finite(x_clean)], na.rm = TRUE)
+  scaled <- (x_clean - rng[1]) / (rng[2] - rng[1])
+
+  return(scaled)
 }
 ```
 
@@ -32,7 +35,7 @@ rescale01 <- function(x) {
 rescale01(c(5, 10, 15))   
 
  # should return: 0.0, 1.0
-rescale01(c(-Inf, Inf))  
+rescale01(c(-Inf, 0.5, Inf))  
 
 # should handle NA correctly
 rescale01(c(NA, 2, 3))  
